@@ -10,17 +10,38 @@
  * PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-
-apply from: "${rootDir}/gradle/library.gradle"
-apply from: "${rootDir}/gradle/publish.gradle"
+apply plugin: 'com.android.library'
+apply from: "${rootDir}/gradle/common.gradle"
+ext {
+    PUBLISH_ARTIFACT_ID = "oaid" //你的artifact_id，一般是module的名字
+    PUBLISH_VERSION = "1.0.1"  //发布版本号
+    PUBLISH_GROUP_ID = 'io.github.mayzs'  //你的sonatype的group_id
+    GITHUB_URL = "https://github.com/mayzs/Android_CN_OAID"//github url
+    GITHUB_CLONE_URL = "https://github.com/mayzs/Android_CN_OAID.git" //github clone url
+    GITHUB_BRANCHE_URL = "https://github.com/mayzs/Android_CN_OAID/tree/master"
+    //github branch url
+    PROJECT_NAME = "Android_CN_OAID"//项目名称
+    PROJECT_DESCRIPTION = "Android_CN_OAID"
+//项目描述
+}
+apply from: 'publish.gradle'
 
 android {
     namespace 'com.github.gzuliyujiang.oaid'
+
+    defaultConfig {
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
 }
 
 dependencies {
     // 华为的最新版本广告标识服务SDK，参阅 https://developer.huawei.com/consumer/cn/doc/HMSCore-Guides/identifier-service-version-change-history-0000001050066927
     api "com.huawei.hms:ads-identifier:3.4.62.300"
     // 荣耀的最新版本广告标识服务SDK，参阅 https://developer.hihonor.com/cn/kitdoc?kitId=11030&navigation=guides&docId=intergrate.md
-    api 'com.hihonor.mcs:ads-identifier:1.0.2.301'
+    api 'com.hihonor.mcs:ads-identifier:1.0.3.300'
 }
