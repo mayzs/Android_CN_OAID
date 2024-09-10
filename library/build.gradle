@@ -14,7 +14,7 @@ apply plugin: 'com.android.library'
 apply from: "${rootDir}/gradle/common.gradle"
 ext {
     PUBLISH_ARTIFACT_ID = "oaid" //你的artifact_id，一般是module的名字
-    PUBLISH_VERSION = "1.0.1"  //发布版本号
+    PUBLISH_VERSION = "1.0.4"  //发布版本号
     PUBLISH_GROUP_ID = 'io.github.mayzs'  //你的sonatype的group_id
     GITHUB_URL = "https://github.com/mayzs/Android_CN_OAID"//github url
     GITHUB_CLONE_URL = "https://github.com/mayzs/Android_CN_OAID.git" //github clone url
@@ -36,12 +36,15 @@ android {
     lintOptions {
         abortOnError false
     }
-
+    buildFeatures {
+        buildConfig=true
+    }
 }
 
 dependencies {
     // 华为的最新版本广告标识服务SDK，参阅 https://developer.huawei.com/consumer/cn/doc/HMSCore-Guides/identifier-service-version-change-history-0000001050066927
-    api "com.huawei.hms:ads-identifier:3.4.62.300"
+    implementation("com.huawei.hms:ads-identifier:3.4.62.300")
     // 荣耀的最新版本广告标识服务SDK，参阅 https://developer.hihonor.com/cn/kitdoc?kitId=11030&navigation=guides&docId=intergrate.md
-    api 'com.hihonor.mcs:ads-identifier:1.0.3.300'
+    implementation("com.hihonor.mcs:ads-identifier:1.0.3.300")
+    implementation("com.google.android.gms:play-services-ads-identifier:18.1.0")
 }

@@ -32,7 +32,9 @@ android {
                 MY_CHANNEL: "unknown",
         ]
     }
-
+    buildFeatures {
+        buildConfig=true
+    }
     // 打包维度列表，会按维度名字母顺序执行，最终发布的具体渠道包的生成可以借助360加固等工具
     productFlavors {
         // 发布模式/正式环境
