@@ -50,8 +50,24 @@ public final class OAIDFactory {
         return ioaid;
     }
 
+    public static IOAID ofManufacturer(Context context) {
+        IOAID impl = createManufacturerImpl(context);
+        if (impl == null) {
+            impl = new DefaultImpl();
+        }
+        return impl;
+    }
+
+    public static IOAID ofMsa(Context context) {
+        return new MsaImpl(context);
+    }
+
+    public static IOAID ofGms(Context context) {
+        return new GmsImpl(context);
+    }
+
     private static IOAID createManufacturerImpl(Context context) {
-        if (OAIDRom.isLenovo() || OAIDRom.isMotolora()) {
+        if (OAIDRom.isLenovo() || OAIDRom.isMotorola()) {
             return new LenovoImpl(context);
         }
         if (OAIDRom.isMeizu()) {
@@ -60,7 +76,10 @@ public final class OAIDFactory {
         if (OAIDRom.isNubia()) {
             return new NubiaImpl(context);
         }
-        if (OAIDRom.isXiaomi() || OAIDRom.isMiui() || OAIDRom.isBlackShark()) {
+        if (OAIDRom.isXiaomi() || OAIDRom.isBlackShark() || OAIDRom.isMiui()) {
+            if (OAIDRom.isMiuiGlobal()) {
+                return new GmsImpl(context);
+            }
             return new XiaomiImpl(context);
         }
         if (OAIDRom.isSamsung()) {
@@ -72,14 +91,14 @@ public final class OAIDFactory {
         if (OAIDRom.isASUS()) {
             return new AsusImpl(context);
         }
-        if (OAIDRom.isHonor()) {
+        if (OAIDRom.isHonor() && !OAIDRom.isEmui()) {
             HonorImpl honor = new HonorImpl(context);
             if (honor.supported()) {
                 // 支持的话（Magic UI 4.0,5.0,6.0及MagicOS 7.0或以上）直接使用荣耀的实现，否则尝试华为的实现
                 return honor;
             }
         }
-        if (OAIDRom.isHuawei() || OAIDRom.isEmui()) {
+        if (OAIDRom.isHuawei() || OAIDRom.isHonor() || OAIDRom.isHarmonyOS() || OAIDRom.isEmui() || OAIDRom.isMagicUI()) {
             return new HuaweiImpl(context);
         }
         if (OAIDRom.isOppo() || OAIDRom.isOnePlus()) {

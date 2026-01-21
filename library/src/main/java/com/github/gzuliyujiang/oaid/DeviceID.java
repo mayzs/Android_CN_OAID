@@ -242,6 +242,42 @@ public final class DeviceID {
     }
 
     /**
+     * 异步获取手机厂商专有的广告标识符，不支持则回调`onOAIDGetError(Exception)`
+     *
+     * @param context 上下文
+     * @param getter  回调
+     */
+    public static void getByManufacturer(Context context, IGetter getter) {
+        IOAID ioaid = OAIDFactory.ofManufacturer(context);
+        OAIDLog.print("OAID implements class: " + ioaid.getClass().getName());
+        ioaid.doGet(getter);
+    }
+
+    /**
+     * 异步获取移动安全联盟通用的广告标识符，不支持则回调`onOAIDGetError(Exception)`
+     *
+     * @param context 上下文
+     * @param getter  回调
+     */
+    public static void getByMsa(Context context, IGetter getter) {
+        IOAID ioaid = OAIDFactory.ofMsa(context);
+        OAIDLog.print("OAID implements class: " + ioaid.getClass().getName());
+        ioaid.doGet(getter);
+    }
+
+    /**
+     * 异步获取谷歌商店服务通用的广告标识符，不支持则回调`onOAIDGetError(Exception)`
+     *
+     * @param context 上下文
+     * @param getter  回调
+     */
+    public static void getByGms(Context context, IGetter getter) {
+        IOAID ioaid = OAIDFactory.ofGms(context);
+        OAIDLog.print("OAID implements class: " + ioaid.getClass().getName());
+        ioaid.doGet(getter);
+    }
+
+    /**
      * 获取唯一设备标识。Android 6.0-9.0 需要申请电话权限才能获取 IMEI，Android 10+ 非系统应用则不再允许获取 IMEI。
      * <pre>
      *     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -250,7 +286,9 @@ public final class DeviceID {
      * @param context 上下文
      * @return IMEI或MEID，可能为空
      * @see Manifest.permission.READ_PHONE_STATE
+     * @deprecated Android 10+ 无法获取，不推荐使用了
      */
+    @Deprecated
     public static String getUniqueID(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // Android 10+ 不允许获取 IMEI、MEID 之类的设备唯一标识
@@ -318,11 +356,12 @@ public final class DeviceID {
      */
     @Deprecated
     public static String getWidevineID() {
+        MediaDrm mediaDrm = null;
         try {
             //See https://stackoverflow.com/questions/16369818/how-to-get-crypto-scheme-uuid
             //You can find some UUIDs in the https://github.com/google/ExoPlayer source code
             final UUID WIDEVINE_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
-            MediaDrm mediaDrm = new MediaDrm(WIDEVINE_UUID);
+            mediaDrm = new MediaDrm(WIDEVINE_UUID);
             byte[] widevineId = mediaDrm.getPropertyByteArray(MediaDrm.PROPERTY_DEVICE_UNIQUE_ID);
             if (widevineId == null) {
                 return "";
@@ -334,6 +373,11 @@ public final class DeviceID {
             return sb.toString();
         } catch (Throwable e) {
             OAIDLog.print(e);
+        } finally {
+            if (mediaDrm != null) {
+                //mediaDrm.close();
+                mediaDrm.release();
+            }
         }
         return "";
     }
